@@ -1,0 +1,42 @@
+{
+  "name": "CryptoI18n",
+  "version": "1.0.0",
+  "styleFileList": [
+  ],
+  "scriptFileList_earlyload": [
+    "dist/earlyload/earlyload.js"
+  ],
+  "scriptFileList_inject_early": [
+    "dist/CryptoI18n.js"
+  ],
+  "scriptFileList_preload": [
+  ],
+  "scriptFileList": [
+  ],
+  "tweeFileList": [
+  ],
+  "imgFileList": [
+  ],
+  "imgFileReplaceList": [
+  ],
+  "additionFile": [
+    "README.md"
+  ],
+  "additionBinaryFile": [
+    "ModI18N.mod.zip.crypt",
+    "ModI18N.mod.zip.nonce",
+    "ModI18N.mod.zip.salt"
+  ],
+  "addonPlugin": [
+  ],
+  "dependenceInfo": [
+    {
+      "modName": "ModLoader",
+      "version": "^2.0.0"
+    },
+    {
+      "modName": "SweetAlert2Mod",
+      "version": "^1.0.0"
+    }
+  ]
+}
