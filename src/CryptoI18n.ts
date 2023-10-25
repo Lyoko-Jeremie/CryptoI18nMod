@@ -10,6 +10,8 @@ export interface CryptDataItem {
     salt: string;
 }
 
+const ModName = 'CryptoI18n';
+
 export class CryptoI18n {
     logger: LogWrapper;
 
@@ -22,13 +24,13 @@ export class CryptoI18n {
 
     async decrypt() {
         try {
-            console.log('[CryptoI18n] decrypt');
-            this.logger.log('[CryptoI18n] decrypt');
+            console.log(`[${ModName}] decrypt`);
+            this.logger.log(`[${ModName}] decrypt`);
             await ready;
             const mod = this.gSC2DataManager.getModLoader().getModByNameOne('CryptoI18n');
             if (!mod) {
-                console.error('[CryptoI18n] Mod not found');
-                this.logger.error('[CryptoI18n] Mod not found');
+                console.error(`[${ModName}] Mod not found`);
+                this.logger.error(`[${ModName}] Mod not found`);
                 return;
             }
 
@@ -46,8 +48,8 @@ export class CryptoI18n {
                     fileName = T.slice(0, -5);
                     typeName = 'salt';
                 } else {
-                    console.warn('[CryptoI18n] Unknown file type', T);
-                    this.logger.warn(`[CryptoI18n] Unknown file type [${T}]`);
+                    console.warn(`[${ModName}] Unknown file type`, T);
+                    this.logger.warn(`[${ModName}] Unknown file type [${T}]`);
                     return;
                 }
                 if (!cdi.has(fileName)) {
@@ -58,16 +60,16 @@ export class CryptoI18n {
             });
             for (const nn of cdi) {
                 if (!(nn[1].crypt && nn[1].nonce && nn[1].salt)) {
-                    console.warn('[CryptoI18n] Missing file', [nn]);
-                    this.logger.warn(`[CryptoI18n] Missing file [${nn[0]}]`);
+                    console.warn(`[${ModName}] Missing file`, [nn]);
+                    this.logger.warn(`[${ModName}] Missing file [${nn[0]}]`);
                     continue;
                 }
                 const crypt = await mod.zip.zip.file(nn[1].crypt)?.async('uint8array');
                 const nonce = await mod.zip.zip.file(nn[1].nonce)?.async('uint8array');
                 const salt = await mod.zip.zip.file(nn[1].salt)?.async('uint8array');
                 if (!(crypt && nonce && salt)) {
-                    console.warn('[CryptoI18n] cannot get file from zip', [nn, crypt, nonce, salt]);
-                    this.logger.warn(`[CryptoI18n] cannot get file from zip [${nn[0]}]`);
+                    console.warn(`[${ModName}] cannot get file from zip`, [nn, crypt, nonce, salt]);
+                    this.logger.warn(`[${ModName}] cannot get file from zip [${nn[0]}]`);
                     continue;
                 }
                 const key = await calcKeyFromPasswordBrowser(await this.readPassword(), salt);
@@ -76,24 +78,24 @@ export class CryptoI18n {
                     key,
                     nonce,
                 ).catch(async (E) => {
-                    console.error('[CryptoI18n] decrypt error', [nn, E]);
-                    this.logger.error(`[CryptoI18n] decrypt error [${nn[0]}] [${E?.message ? E.message : E}]`);
+                    console.error(`[${ModName}] decrypt error`, [nn, E]);
+                    this.logger.error(`[${ModName}] decrypt error [${nn[0]}] [${E?.message ? E.message : E}]`);
                     await window.modSweetAlert2Mod.fire(`解密失败，密码错误: [${E?.message ? E.message : E}]`);
                 });
                 if (!decryptZip) {
                     return;
                 }
                 if (!await this.gModUtils.lazyRegisterNewModZipData(decryptZip)) {
-                    console.error('[CryptoI18n] cannot register new mod zip data', [nn, decryptZip]);
-                    this.logger.error(`[CryptoI18n] cannot register new mod zip data [${nn[0]}]`);
+                    console.error(`[${ModName}] cannot register new mod zip data`, [nn, decryptZip]);
+                    this.logger.error(`[${ModName}] cannot register new mod zip data [${nn[0]}]`);
                 } else {
-                    console.log('[CryptoI18n] decrypt success', [nn]);
-                    this.logger.log(`[CryptoI18n] decrypt success [${nn[0]}]`);
+                    console.log(`[${ModName}] decrypt success`, [nn]);
+                    this.logger.log(`[${ModName}] decrypt success [${nn[0]}]`);
                 }
             }
         } catch (e: any) {
             console.error(e);
-            this.logger.error(`[CryptoI18n] decrypt () Error:[${e?.message ? e.message : e}]`);
+            this.logger.error(`[${ModName}] decrypt () Error:[${e?.message ? e.message : e}]`);
         }
     }
 
@@ -102,10 +104,10 @@ export class CryptoI18n {
         // TODO
         try {
             const {value: password} = await window.modSweetAlert2Mod.fireWithOptions({
-                title: '请输入CryptoI18n的密码',
+                title: `请输入${ModName}的密码`,
                 input: 'password',
                 inputLabel: '密码',
-                inputPlaceholder: '请输入CryptoI18n的密码',
+                inputPlaceholder: `请输入${ModName}的密码`,
                 inputAttributes: {
                     maxlength: '1000',
                     autocapitalize: 'off',
@@ -122,6 +124,14 @@ export class CryptoI18n {
             console.error(e);
         }
         return undefined;
+    }
+
+    tryLoadPassword() {
+        // try load from localstorage
+    }
+
+    savePassword() {
+        // encrypt and save to localstorage
     }
 
 }
